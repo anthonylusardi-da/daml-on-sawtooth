@@ -39,8 +39,8 @@ import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntryId;
 import com.daml.ledger.participant.state.kvutils.KeyValueCommitting;
 import com.daml.ledger.participant.state.v1.Offset;
 import com.daml.ledger.participant.state.v1.Update;
-import com.daml.ledger.participant.state.v1.Update.Heartbeat;
-import com.digitalasset.daml.lf.data.Time.Timestamp;
+import com.daml.ledger.participant.state.v1.Update.Heartbeat; // NOTE: This is missing/moved
+import com.daml.lf.data.Time.Timestamp;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;

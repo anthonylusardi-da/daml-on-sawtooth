@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 import com.blockchaintp.sawtooth.daml.processor.impl.DamlCommitterImpl;
 import com.blockchaintp.sawtooth.daml.processor.impl.DamlTransactionHandler;
-import com.digitalasset.daml.lf.engine.Engine;
+import com.daml.lf.engine.Engine;
 
 import sawtooth.sdk.processor.TransactionHandler;
 

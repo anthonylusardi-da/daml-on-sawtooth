@@ -34,14 +34,14 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.digitalasset.daml.lf.data.Ref;
-import com.digitalasset.ledger.api.auth.AuthService;
-import com.digitalasset.ledger.api.auth.AuthServiceJWTPayload;
-import com.digitalasset.ledger.api.auth.Claim;
-import com.digitalasset.ledger.api.auth.ClaimActAsParty$;
-import com.digitalasset.ledger.api.auth.ClaimAdmin$;
-import com.digitalasset.ledger.api.auth.ClaimPublic$;
-import com.digitalasset.ledger.api.auth.Claims;
+import com.daml.lf.data.Ref;
+import com.daml.ledger.api.auth.AuthService;
+import com.daml.ledger.api.auth.AuthServiceJWTPayload;
+import com.daml.ledger.api.auth.Claim;
+import com.daml.ledger.api.auth.ClaimActAsParty$;
+import com.daml.ledger.api.auth.ClaimAdmin$;
+import com.daml.ledger.api.auth.ClaimPublic$;
+import com.daml.ledger.api.auth.Claims;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -103,7 +103,7 @@ public final class DamlAuthServices implements AuthService {
     }
   }
 
-  private com.digitalasset.ledger.api.auth.Claims decodeAndParse(final io.grpc.Metadata headers) throws Exception {
+  private com.daml.ledger.api.auth.Claims decodeAndParse(final io.grpc.Metadata headers) throws Exception {
 
     final String regex = "Bearer (.*)";
     final Pattern pattern = Pattern.compile(regex);

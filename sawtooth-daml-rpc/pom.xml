@@ -120,12 +120,12 @@
 
     <!-- DAML -->
     <dependency>
-      <groupId>com.digitalasset.ledger</groupId>
+      <groupId>com.daml</groupId>
       <artifactId>ledger-api-auth_${scala.lang.version}</artifactId>
     </dependency>
     <!-- Required for the index server -->
     <dependency>
-      <groupId>com.digitalasset.platform</groupId>
+      <groupId>com.daml</groupId>
       <artifactId>sandbox_${scala.lang.version}</artifactId>
     </dependency>
 

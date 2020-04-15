@@ -19,7 +19,7 @@ import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlStateKey;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlStateValue;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlSubmission;
 import com.daml.ledger.participant.state.v1.Configuration;
-import com.digitalasset.daml.lf.data.Time.Timestamp;
+import com.daml.lf.data.Time.Timestamp;
 
 import sawtooth.sdk.processor.exceptions.InvalidTransactionException;
 import scala.Option;

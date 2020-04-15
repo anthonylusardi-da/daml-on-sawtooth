@@ -20,15 +20,15 @@ import com.codahale.metrics.SharedMetricRegistries
 
 import scala.concurrent.duration._
 import com.blockchaintp.utils.DirectoryKeyManager
-import com.digitalasset.api.util.TimeProvider
-import com.digitalasset.platform.common.logging.NamedLoggerFactory
-import com.digitalasset.daml.lf.archive.DarReader
-import com.digitalasset.daml_lf_dev.DamlLf.Archive
-import com.digitalasset.ledger.api.auth.{AuthServiceWildcard, AuthServiceJWT}
-import com.digitalasset.jwt.{JwtVerifier, HMAC256Verifier}
+import com.daml.api.util.TimeProvider
+import com.daml.platform.common.logging.NamedLoggerFactory
+import com.daml.lf.archive.DarReader
+import com.daml_lf_dev.DamlLf.Archive
+import com.daml.ledger.api.auth.{AuthServiceWildcard, AuthServiceJWT}
+import com.daml.jwt.{JwtVerifier, HMAC256Verifier}
 
-import com.digitalasset.platform.apiserver.{ApiServerConfig, StandaloneApiServer}
-import com.digitalasset.platform.indexer.{IndexerConfig, StandaloneIndexerServer}
+import com.daml.platform.apiserver.{ApiServerConfig, StandaloneApiServer}
+import com.daml.platform.indexer.{IndexerConfig, StandaloneIndexerServer}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{Await, ExecutionContext}
