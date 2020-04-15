@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import akka.protobuf.ByteString;
+// import akka.protobuf.ByteString; // NOTE: This broke?
+import akka.protobufv3.internal.ByteString;
 import sawtooth.sdk.signing.Context;
 import sawtooth.sdk.signing.CryptoFactory;
 import sawtooth.sdk.signing.PrivateKey;
