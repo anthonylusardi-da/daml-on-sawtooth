@@ -94,9 +94,13 @@ public final class DamlTransactionHandler implements TransactionHandler {
       if (operation.hasTransaction()) {
         SawtoothDamlTransaction tx = operation.getTransaction();
         String participantId = operation.getSubmittingParticipant();
-        KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
+
+        MetricRegistry metricRegistry = new MetricRegistry();
+        KeyValueCommitting keyValueCommitting = new KeyValueCommitting(metricRegistry);   
         DamlLogEntryId entryId = keyValueCommitting.unpackDamlLogEntryId(tx.getLogEntryId());
-        DamlSubmission submission = KeyValueSubmission.unpackDamlSubmission(tx.getSubmission());
+
+        KeyValueSubmission keyValueSubmission = new KeyValueSubmission(metricRegistry);
+        DamlSubmission submission = keyValueSubmission.unpackDamlSubmission(tx.getSubmission());
         processTransaction(ledgerState, txHeader, submission, participantId, entryId);
       }
     } catch (InvalidProtocolBufferException e) {

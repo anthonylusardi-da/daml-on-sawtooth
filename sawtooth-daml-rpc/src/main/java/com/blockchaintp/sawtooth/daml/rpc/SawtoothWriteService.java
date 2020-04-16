@@ -303,9 +303,12 @@ public final class SawtoothWriteService implements WriteService {
 
   private SawtoothDamlOperation submissionToOperation(final DamlSubmission submission,
       final DamlLogEntryId damlLogEntryId) {
+        MetricRegistry metricRegistry = new MetricRegistry();
+        KeyValueCommitting keyValueCommitting = new KeyValueCommitting(metricRegistry);
+        KeyValueSubmission keyValueSubmission = new KeyValueSubmission(metricRegistry);
     SawtoothDamlTransaction payload = SawtoothDamlTransaction.newBuilder()
-        .setSubmission(KeyValueSubmission.packDamlSubmission(submission))
-        .setLogEntryId(KeyValueCommitting.packDamlLogEntryId(damlLogEntryId)).build();
+        .setSubmission(keyValueSubmission.packDamlSubmission(submission))
+        .setLogEntryId(keyValueCommitting.packDamlLogEntryId(damlLogEntryId)).build();
     return SawtoothDamlOperation.newBuilder().setTransaction(payload).setSubmittingParticipant(getParticipantId())
         .build();
   }
@@ -334,8 +337,8 @@ public final class SawtoothWriteService implements WriteService {
     }
     DamlLogEntryId damlLogEntryId = DamlLogEntryId.newBuilder().setEntryId(ByteString.copyFromUtf8(submissionId))
             .build();
-
-    DamlSubmission submission = KeyValueSubmission.partyToSubmission(submissionId, Option.apply(finalHint), displayName,
+    KeyValueSubmission keyValueSubmission = new KeyValueSubmission(new MetricRegistry());
+    DamlSubmission submission = keyValueSubmission.partyToSubmission(submissionId, Option.apply(finalHint), displayName,
             getParticipantId());
 
     return getSubmissionResultCompletionStage(damlLogEntryId, submission);
@@ -358,8 +361,9 @@ public final class SawtoothWriteService implements WriteService {
   @Override
   public CompletionStage<SubmissionResult> submitConfiguration(final Timestamp maxRecordTime, final String submissionId,
       final Configuration config) {
+    KeyValueSubmission keyValueSubmission = new KeyValueSubmission(new MetricRegistry());
     DamlSubmission submission =
-            KeyValueSubmission.configurationToSubmission(maxRecordTime, submissionId, this.participantId, config);
+            keyValueSubmission.configurationToSubmission(maxRecordTime, submissionId, this.participantId, config);
     return getSubmissionResultCompletionStage(submissionId, submission);
   }
 
@@ -377,7 +381,8 @@ public final class SawtoothWriteService implements WriteService {
       final GenTransaction<NodeId, ContractId, VersionedValue<ContractId>> transaction) {
 
     LOGGER.info(String.format("Max Record Time = %s", submitterInfo.maxRecordTime()));
-    DamlSubmission submission = KeyValueSubmission.transactionToSubmission(submitterInfo, transactionMeta, transaction);
+    KeyValueSubmission keyValueSubmission = new KeyValueSubmission(new MetricRegistry());
+    DamlSubmission submission = keyValueSubmission.transactionToSubmission(submitterInfo, transactionMeta, transaction);
     DamlLogEntryId damlLogEntryId = DamlLogEntryId.newBuilder()
         .setEntryId(ByteString.copyFromUtf8(UUID.randomUUID().toString())).build();
 
@@ -399,7 +404,8 @@ public final class SawtoothWriteService implements WriteService {
     if (optionalDescription.nonEmpty()) {
       sourceDescription = optionalDescription.get();
     }
-    DamlSubmission submission = KeyValueSubmission.archivesToSubmission(submissionId, archives, sourceDescription,
+    KeyValueSubmission keyValueSubmission = new KeyValueSubmission(new MetricRegistry());
+    DamlSubmission submission = keyValueSubmission.archivesToSubmission(submissionId, archives, sourceDescription,
         this.getParticipantId());
 
     return getSubmissionResultCompletionStage(submissionId, submission);
