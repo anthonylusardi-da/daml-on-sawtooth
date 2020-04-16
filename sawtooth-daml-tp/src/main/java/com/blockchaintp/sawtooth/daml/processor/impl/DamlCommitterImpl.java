@@ -12,6 +12,7 @@
 package com.blockchaintp.sawtooth.daml.processor.impl;
 
 import com.blockchaintp.sawtooth.daml.processor.DamlCommitter;
+import com.codahale.metrics.MetricRegistry;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntry;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntryId;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlStateKey;
@@ -52,7 +53,8 @@ public class DamlCommitterImpl implements DamlCommitter {
       final Configuration defaultConfig, final DamlLogEntryId entryId, final Timestamp recordTime,
       final DamlSubmission submission, final String participantId,
       final java.util.Map<DamlStateKey, Option<DamlStateValue>> stateMap) throws InvalidTransactionException {
-    Tuple2<DamlLogEntry, Map<DamlStateKey, DamlStateValue>> processedSubmission = KeyValueCommitting.processSubmission(
+    KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());
+    Tuple2<DamlLogEntry, Map<DamlStateKey, DamlStateValue>> processedSubmission = keyValueCommitting.processSubmission(
         this.engine, entryId, recordTime, defaultConfig, submission, participantId, mapToScalaImmutableMap(stateMap));
     DamlLogEntry logEntry = processedSubmission._1;
     java.util.Map<DamlStateKey, DamlStateValue> stateUpdateMap = scalaMapToMap(processedSubmission._2);

@@ -37,6 +37,7 @@ import com.blockchaintp.sawtooth.daml.util.KeyValueUtils;
 import com.blockchaintp.sawtooth.daml.util.Namespace;
 import com.blockchaintp.utils.KeyManager;
 import com.blockchaintp.utils.SawtoothClientUtils;
+import com.codahale.metrics.MetricRegistry;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlCommandDedupKey;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntryId;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlStateKey;
@@ -167,8 +168,9 @@ public final class SawtoothWriteService implements WriteService {
   }
 
   private Collection<String> makeOutputAddresses(final DamlSubmission submission, final DamlLogEntryId logEntryId) {
+    KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
     Collection<DamlStateKey> keys = JavaConverters
-        .asJavaCollection(KeyValueCommitting.submissionOutputs(logEntryId, submission));
+        .asJavaCollection(keyValueCommitting.submissionOutputs(logEntryId, submission));
     Set<String> addresses = new HashSet<>();
     for (DamlStateKey k : keys) {
       addresses.add(Namespace.makeAddressForType(k));

@@ -25,6 +25,7 @@ import com.blockchaintp.sawtooth.daml.protobuf.SawtoothDamlOperation;
 import com.blockchaintp.sawtooth.daml.protobuf.SawtoothDamlTransaction;
 import com.blockchaintp.sawtooth.daml.util.KeyValueUtils;
 import com.blockchaintp.sawtooth.daml.util.Namespace;
+import com.codahale.metrics.MetricRegistry;
 import com.daml.ledger.participant.state.v1.TimeModel;
 import com.daml.ledger.participant.state.kvutils.Conversions;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntry;
@@ -93,7 +94,8 @@ public final class DamlTransactionHandler implements TransactionHandler {
       if (operation.hasTransaction()) {
         SawtoothDamlTransaction tx = operation.getTransaction();
         String participantId = operation.getSubmittingParticipant();
-        DamlLogEntryId entryId = KeyValueCommitting.unpackDamlLogEntryId(tx.getLogEntryId());
+        KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
+        DamlLogEntryId entryId = keyValueCommitting.unpackDamlLogEntryId(tx.getLogEntryId());
         DamlSubmission submission = KeyValueSubmission.unpackDamlSubmission(tx.getSubmission());
         processTransaction(ledgerState, txHeader, submission, participantId, entryId);
       }

@@ -36,6 +36,7 @@ import com.blockchaintp.sawtooth.daml.protobuf.SawtoothDamlParty;
 import com.blockchaintp.sawtooth.daml.util.EventConstants;
 import com.blockchaintp.sawtooth.daml.util.Namespace;
 import com.blockchaintp.sawtooth.timekeeper.protobuf.TimeKeeperGlobalRecord;
+import com.codahale.metrics.MetricRegistry;
 import com.daml.ledger.participant.state.v1.TimeModel;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlCommandDedupValue;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntry;
@@ -106,8 +107,8 @@ public final class DamlLedgerState implements LedgerState {
       if (key.getKeyCase().equals(DamlStateKey.KeyCase.COMMAND_DEDUP)) {
         return DamlStateValue.newBuilder().setCommandDedup(DamlCommandDedupValue.newBuilder().build()).build();
       }
-      return KeyValueCommitting.unpackDamlStateValue(uncompressByteString(bs));
-
+      KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());
+      return keyValueCommitting.unpackDamlStateValue(uncompressByteString(bs));
     }
   }
 
@@ -158,7 +159,8 @@ public final class DamlLedgerState implements LedgerState {
     if (bs == null) {
       return null;
     }
-    DamlLogEntry e = KeyValueCommitting.unpackDamlLogEntry(uncompressByteString(bs));
+    KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());    
+    DamlLogEntry e = keyValueCommitting.unpackDamlLogEntry(uncompressByteString(bs));
     return e;
   }
 
@@ -170,11 +172,12 @@ public final class DamlLedgerState implements LedgerState {
       DamlStateKey key = e.getKey();
       DamlStateValue val = e.getValue();
       ByteString packDamlStateValue;
+      KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
       if (key.getKeyCase().equals(DamlStateKey.KeyCase.COMMAND_DEDUP)) {
         LOGGER.fine("Swapping DamlStateKey for DamlStateValue on COMMAND_DEDUP");
-        packDamlStateValue = KeyValueCommitting.packDamlStateKey(key);
+        packDamlStateValue = keyValueCommitting.packDamlStateKey(key);
       } else {
-        packDamlStateValue = KeyValueCommitting.packDamlStateValue(val);
+        packDamlStateValue = keyValueCommitting.packDamlStateValue(val);
       }
       assert (packDamlStateValue.size() > 0);
       String address = Namespace.makeAddressForType(key);
@@ -195,9 +198,10 @@ public final class DamlLedgerState implements LedgerState {
       throws InternalError, InvalidTransactionException {
     List<String> idList = new ArrayList<>();
     Map<String, ByteString> setMap = new HashMap<>();
+    KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
     for (Entry<DamlLogEntryId, DamlLogEntry> e : entries) {
       String addr = Namespace.makeAddressForType(e.getKey());
-      setMap.put(addr, compressByteString(KeyValueCommitting.packDamlLogEntry(e.getValue())));
+      setMap.put(addr, compressByteString(keyValueCommitting.packDamlLogEntry(e.getValue())));
       idList.add(addr);
     }
     state.setState(setMap.entrySet());
@@ -251,7 +255,8 @@ public final class DamlLedgerState implements LedgerState {
     Map<String, String> attrMap = new HashMap<>();
     attrMap.put(EventConstants.DAML_LOG_ENTRY_ID_EVENT_ATTRIBUTE, entryId.getEntryId().toStringUtf8());
     attrMap.put(EventConstants.DAML_OFFSET_EVENT_ATTRIBUTE, Long.toString(1));
-    ByteString packedData = KeyValueCommitting.packDamlLogEntry(entry);
+    KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
+    ByteString packedData = keyValueCommitting.packDamlLogEntry(entry);
     ByteString compressedData = compressByteString(packedData);
     LOGGER.info(String.format("Sending event for %s, size=%s, compressed=%s", entryId.getEntryId().toStringUtf8(),
         packedData.size(), compressedData.size()));

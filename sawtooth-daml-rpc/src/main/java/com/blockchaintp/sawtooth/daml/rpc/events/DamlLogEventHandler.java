@@ -34,6 +34,7 @@ import org.zeromq.ZMsg;
 import com.blockchaintp.sawtooth.daml.messaging.ZmqStream;
 import com.blockchaintp.sawtooth.daml.rpc.SawtoothTransactionsTracer;
 import com.blockchaintp.sawtooth.daml.util.EventConstants;
+import com.codahale.metrics.MetricRegistry;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntry;
 import com.daml.ledger.participant.state.kvutils.DamlKvutils.DamlLogEntryId;
 import com.daml.ledger.participant.state.kvutils.KeyValueCommitting;
@@ -201,7 +202,8 @@ public class DamlLogEventHandler implements Runnable, ZLoop.IZLoopHandler {
         ByteString entryIdVal = ByteString.copyFromUtf8(entryIdStr);
         DamlLogEntryId id = DamlLogEntryId.newBuilder().setEntryId(entryIdVal).build();
         ByteString evtData = uncompressByteString(evt.getData());
-        DamlLogEntry logEntry = KeyValueCommitting.unpackDamlLogEntry(evtData);
+        KeyValueCommitting keyValueCommitting = new KeyValueCommitting(new MetricRegistry());   
+        DamlLogEntry logEntry = keyValueCommitting.unpackDamlLogEntry(evtData);
         for (Update logEntryToUpdate : this.transformer.logEntryUpdate(id, logEntry)) {
           Offset offset = new Offset(new long[] {blockNum, offsetCounter, updateCounter});
           updateCounter++;
